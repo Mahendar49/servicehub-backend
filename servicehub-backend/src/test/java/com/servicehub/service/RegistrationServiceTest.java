@@ -16,10 +16,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.servicehub.dto.RegisterRequest;
 import com.servicehub.entity.Role;
 import com.servicehub.entity.User;
+import com.servicehub.exception.DuplicateEmailException;
 import com.servicehub.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,10 +31,12 @@ class RegistrationServiceTest {
     private UserRepository userRepository;
 
     private RegistrationService registrationService;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
-        registrationService = new RegistrationService(userRepository);
+        passwordEncoder = new BCryptPasswordEncoder();
+        registrationService = new RegistrationService(userRepository, passwordEncoder);
     }
 
     @Test
@@ -67,7 +71,7 @@ class RegistrationServiceTest {
 
         when(userRepository.existsByEmail("alice@example.com")).thenReturn(true);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        DuplicateEmailException exception = assertThrows(DuplicateEmailException.class,
                 () -> registrationService.registerClient(request));
 
         assertEquals("Email is already registered", exception.getMessage());
