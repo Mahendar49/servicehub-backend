@@ -11,7 +11,7 @@
 	<groupId>com.servicehub</groupId>
 	<artifactId>servicehub-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>servicehub-backend</name>
 	<description>Service Hub Project</description>
 	<url/>
