@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,13 +31,4 @@ public class AuthController {
                 .body(Map.of("id", id, "message", "Client registered successfully"));
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateEmail(IllegalArgumentException exception) {
-        return ResponseEntity.status(409).body(Map.of("error", "Email is already registered"));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
-        return ResponseEntity.badRequest().body(Map.of("error", "Invalid registration details"));
-    }
 }
