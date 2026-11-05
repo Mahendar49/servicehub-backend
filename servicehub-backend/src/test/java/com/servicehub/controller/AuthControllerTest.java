@@ -24,12 +24,16 @@ import com.servicehub.dto.RegisterRequest;
 import com.servicehub.exception.DuplicateEmailException;
 import com.servicehub.exception.GlobalExceptionHandler;
 import com.servicehub.service.RegistrationService;
+import com.servicehub.service.AuthenticationService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
     @Mock
     private RegistrationService registrationService;
+
+    @Mock
+    private AuthenticationService authenticationService;
 
     private MockMvc mockMvc;
     private LocalValidatorFactoryBean validator;
@@ -39,7 +43,7 @@ class AuthControllerTest {
         validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new AuthController(registrationService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new AuthController(registrationService, authenticationService))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setValidator(validator)
                 .build();
