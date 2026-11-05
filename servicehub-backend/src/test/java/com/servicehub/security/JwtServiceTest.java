@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.servicehub.entity.Role;
 import com.servicehub.entity.User;
@@ -23,7 +24,7 @@ class JwtServiceTest {
     void generatedTokenCanBeValidated() {
         JwtService service = new JwtService(SECRET, CLOCK);
         User user = new User("Alice", "alice@example.com", "hash", Role.CLIENT);
-        user.setId(42L);
+        ReflectionTestUtils.setField(user, "id", 42L);
 
         String token = service.generateAccessToken(user);
 
@@ -34,7 +35,7 @@ class JwtServiceTest {
     void rejectsTamperedToken() {
         JwtService service = new JwtService(SECRET, CLOCK);
         User user = new User("Alice", "alice@example.com", "hash", Role.CLIENT);
-        user.setId(42L);
+        ReflectionTestUtils.setField(user, "id", 42L);
         String token = service.generateAccessToken(user);
         String tampered = token.substring(0, token.length() - 1)
                 + (token.endsWith("a") ? "b" : "a");
