@@ -11,16 +11,19 @@ import com.servicehub.dto.LoginResponse;
 import com.servicehub.entity.User;
 import com.servicehub.exception.InvalidCredentialsException;
 import com.servicehub.repository.UserRepository;
+import com.servicehub.security.JwtService;
 
 @Service
 public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Transactional(readOnly = true)
@@ -33,6 +36,6 @@ public class AuthenticationService {
             throw new InvalidCredentialsException();
         }
 
-        return new LoginResponse(user.getId(), user.getName(), user.getEmail(), user.getRole());
+        return new LoginResponse(jwtService.generateAccessToken(user), user.getId(), user.getName(), user.getEmail(), user.getRole());
     }
 }
