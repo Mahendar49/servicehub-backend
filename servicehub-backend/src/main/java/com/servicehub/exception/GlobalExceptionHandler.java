@@ -15,6 +15,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(409).body(Map.of("error", exception.getMessage()));
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentialsException exception) {
+        return ResponseEntity.status(401).body(Map.of("error", exception.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
         return ResponseEntity.badRequest().body(Map.of("error", "Invalid registration details"));
