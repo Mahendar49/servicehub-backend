@@ -20,6 +20,7 @@ import com.servicehub.entity.Role;
 import com.servicehub.entity.User;
 import com.servicehub.exception.InvalidCredentialsException;
 import com.servicehub.repository.UserRepository;
+import com.servicehub.security.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
@@ -30,11 +31,14 @@ class AuthenticationServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtService jwtService;
+
     private AuthenticationService authenticationService;
 
     @BeforeEach
     void setUp() {
-        authenticationService = new AuthenticationService(userRepository, passwordEncoder);
+        authenticationService = new AuthenticationService(userRepository, passwordEncoder, jwtService);
     }
 
     @Test
@@ -43,9 +47,12 @@ class AuthenticationServiceTest {
         User user = new User("Alice", "alice@example.com", "stored-hash", Role.CLIENT);
         when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("correct-password", "stored-hash")).thenReturn(true);
+        when(jwtService.generateAccessToken(user)).thenReturn("signed-token");
 
         LoginResponse response = authenticationService.verifyCredentials(request);
 
+        assertEquals("signed-token", response.getAccessToken());
+        assertEquals("Bearer", response.getTokenType());
         assertEquals("Alice", response.getName());
         assertEquals("alice@example.com", response.getEmail());
         assertEquals(Role.CLIENT, response.getRole());
