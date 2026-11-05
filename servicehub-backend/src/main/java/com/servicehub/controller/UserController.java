@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.servicehub.dto.LoginResponse;
 import com.servicehub.entity.User;
 import com.servicehub.repository.UserRepository;
 
