@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.servicehub.dto.RegisterRequest;
+import com.servicehub.dto.LoginRequest;
+import com.servicehub.dto.LoginResponse;
+import com.servicehub.service.AuthenticationService;
 import com.servicehub.service.RegistrationService;
 
 import jakarta.validation.Valid;
@@ -19,9 +22,11 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final RegistrationService registrationService;
+    private final AuthenticationService authenticationService;
 
-    public AuthController(RegistrationService registrationService) {
+    public AuthController(RegistrationService registrationService, AuthenticationService authenticationService) {
         this.registrationService = registrationService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/register")
@@ -31,4 +36,8 @@ public class AuthController {
                 .body(Map.of("id", id, "message", "Client registered successfully"));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authenticationService.verifyCredentials(request));
+    }
 }
