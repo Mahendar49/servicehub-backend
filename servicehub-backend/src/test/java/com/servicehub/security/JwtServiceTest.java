@@ -37,8 +37,10 @@ class JwtServiceTest {
         User user = new User("Alice", "alice@example.com", "hash", Role.CLIENT);
         ReflectionTestUtils.setField(user, "id", 42L);
         String token = service.generateAccessToken(user);
-        String tampered = token.substring(0, token.length() - 1)
-                + (token.endsWith("a") ? "b" : "a");
+        int signatureStart = token.lastIndexOf('.') + 1;
+        String tampered = token.substring(0, signatureStart)
+                + (token.charAt(signatureStart) == 'a' ? "b" : "a")
+                + token.substring(signatureStart + 1);
 
         assertThrows(JwtException.class, () -> service.validateAndGetUserId(tampered));
     }
